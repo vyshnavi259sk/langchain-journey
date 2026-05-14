@@ -1,4 +1,4 @@
-Phase 1 is the basics: Day 1-5
+Phase 1 is the basics: Day 1-5  
 Day 1 and 2: JSON
 To parse an API response in JSON into a python dictionary and to send a dictionary as a JSON to an API.
 Day 3: HTTP GET
