@@ -2,7 +2,7 @@
 This code demonstrates how to use the ChatGroq model from the langchain_groq library to 
 create a simple chatbot that can answer questions. It uses a chat prompt template to 
 structure the conversation and a string output parser to extract the text response from 
-the model. The OpenAI API key is loaded from an environment variable using the dotenv 
+the model. The Groq API key is loaded from an environment variable using the dotenv
 library.
 Load API key
 LLM defined with llama as model and groq as provider
@@ -21,7 +21,7 @@ import os
 load_dotenv()
 
 llm = ChatGroq(
-    api_key=os.getenv("OPENAI_API_KEY"),
+    api_key=os.getenv("GROQ_API_KEY") or os.getenv("OPENAI_API_KEY"),
     model="llama-3.1-8b-instant"
 )
 

@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-key = os.getenv("OPENAI_API_KEY")
+key = os.getenv("GROQ_API_KEY") or os.getenv("OPENAI_API_KEY")  # this hits Groq's API, so GROQ_API_KEY is the real name
 
 response = requests.post(
     "https://api.groq.com/openai/v1/chat/completions",

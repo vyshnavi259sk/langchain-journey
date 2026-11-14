@@ -2,7 +2,38 @@
 
 A structured, day-by-day log of learning LangChain and LLM API integration from first principles — starting with raw JSON/HTTP API calls and building up to multi-step LLM chains.
 
-**Phase 1 — Fundamentals (Days 1–5):** JSON parsing, HTTP requests, calling an AI API directly, environment setup.
-**Phase 2 — LangChain (Days 6+):** prompt templates, chains, and multi-step LLM pipelines using Groq + Llama 3.1.
+**Phase 1 — Fundamentals (Days 1–4):** JSON parsing, HTTP requests, calling an AI API directly, environment setup.
+**Phase 2 — LangChain (Days 6–8):** prompt templates, chains, output parsers, and multi-step LLM pipelines using Groq + Llama 3.1.
 
-Each `dayN.py` file is a self-contained exercise; the notes below describe what each one covers.
+## Setup
+
+```bash
+pip install -r requirements.txt
+```
+
+Create a `.env` file in the repo root with:
+
+```
+GROQ_API_KEY=your_key_here
+```
+
+(Groq provides the OpenAI-compatible API used throughout this repo — see [groq.com](https://groq.com).)
+
+## Day-by-day
+
+| Day | File | What it covers |
+|-----|------|-----------------|
+| 1 | `day1.py` | Parsing nested JSON, indexing into dicts/lists, mutating a parsed structure |
+| 2 | `day2.py` | Parsing a chat-completion-shaped JSON response; serializing a dict back to JSON with `json.dumps` |
+| 3 | `day3.py` | Making a live HTTP GET request with `requests` and reading the JSON response |
+| 4 | `day4.py` | Calling an LLM chat-completion endpoint (Groq) directly over HTTP with `requests`, using an API key loaded via `dotenv` |
+| 6 | `day6.py` | First LangChain exercise: `ChatGroq` + `SystemMessage`/`HumanMessage`, invoking a chat model directly |
+| 7 | `day7.py` | `ChatPromptTemplate` with variables, and the `prompt \| llm` chain syntax |
+| 8 | `day8-1.py` | Full chain: `prompt \| llm \| StrOutputParser`, so `.invoke()` returns plain text instead of a message object |
+| 8 | `day8-2.py` | Chaining two prompts together — the output of one LLM call feeds into the next (`{"blog_post": chain1} \| prompt2 \| llm \| parser`) |
+
+(Day 5 was a planning/reading day with no code checked in.)
+
+## Daily log
+
+`journal.md` tracks a running streak of daily commits to this repo.

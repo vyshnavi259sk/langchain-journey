@@ -15,7 +15,7 @@ import os
 load_dotenv()
 
 llm = ChatGroq(
-    api_key=os.getenv("OPENAI_API_KEY"),
+    api_key=os.getenv("GROQ_API_KEY") or os.getenv("OPENAI_API_KEY"),
     model="llama-3.1-8b-instant"
 )
 
