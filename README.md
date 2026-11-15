@@ -42,6 +42,7 @@ implementation files are named to avoid colliding with the table above:
 |-----|------|-----------------|
 | "Day 2" (2026-11-14) | `day2_lcel_runnables.py` | LCEL's `RunnableParallel`, `RunnableLambda`, and `RunnablePassthrough` — fanning a single input into multiple branches, the shape that later powers RAG chains |
 | "Day 3" (2026-11-15) | `day3_document_loaders.py` | `TextLoader`, `DirectoryLoader`, `PyPDFLoader`, and `WebBaseLoader` turning files/PDFs/web pages into `Document` objects with `page_content` + `metadata` |
+| "Day 4" (2026-11-15) | `day4_text_splitting.py` | `CharacterTextSplitter` and `RecursiveCharacterTextSplitter` — breaking `Document`s into overlapping chunks via `chunk_size`/`chunk_overlap` ahead of embeddings |
 
 ## Daily log
 

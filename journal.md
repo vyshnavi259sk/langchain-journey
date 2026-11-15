@@ -27,3 +27,24 @@ Key loaders covered today:
 - **WebBaseLoader** — fetches a URL with `requests` and strips HTML with `BeautifulSoup` to produce a `Document`, with `metadata["source"]` set to the page URL. This is the bridge from "my own files" to "the live web" as a data source.
 
 Practical exercise: load three different sources — a local `.txt` file with `TextLoader`, a small PDF with `PyPDFLoader`, and a folder of notes with `DirectoryLoader` — then print `len(documents)` and `documents[0].metadata` for each to compare how metadata differs by loader. This sets up the next topic directly: these raw `Document`s are usually too large to embed as-is, so **text splitting** (e.g. `RecursiveCharacterTextSplitter`) is the next stop before embeddings and vector stores.
+
+## 15-11-2026
+**Day 4: Text Splitting — CharacterTextSplitter and RecursiveCharacterTextSplitter**
+
+Day 3's loaders produce `Document` objects, but those Documents are usually far too large to embed or feed into an LLM's context window as-is. Today's topic is **text splitting**: breaking a Document's `page_content` into smaller, slightly overlapping chunks before the next steps (embeddings → vector store → retrieval).
+
+Two key parameters control every splitter:
+
+- **`chunk_size`** — the target maximum size of each chunk (characters, for the splitters used here).
+- **`chunk_overlap`** — how many characters repeat between the end of one chunk and the start of the next, so a sentence sitting on a chunk boundary still appears whole in at least one chunk and local context isn't lost.
+
+Splitters covered, both from the standalone `langchain_text_splitters` package (the current recommended import; `langchain.text_splitter` still re-exports them for backwards compatibility):
+
+- **`CharacterTextSplitter`** — splits on a single separator (default `"\n\n"`), only falling back to a hard character cut if a resulting piece is still bigger than `chunk_size`. Simple, but can produce chunks well over the target size if paragraphs are long, and prints a warning when that happens.
+- **`RecursiveCharacterTextSplitter`** — tries a *list* of separators in order (paragraph → line → sentence-ish → word → character), recursing into whichever piece is still too big. This is LangChain's recommended default for generic text because it keeps semantically related text together far more reliably than a single fixed separator.
+
+Both expose `split_text(str) -> list[str]` for raw strings and `split_documents(list[Document]) -> list[Document]`, which splits `page_content` while copying the parent's `metadata` onto every resulting chunk — so each chunk still knows which file (and page, for PDFs) it came from, which retrieval will depend on later.
+
+Practical implementation: `day4_text_splitting.py` runs both splitters on the same deliberately "messy" sample text (short title line, one long paragraph, a second paragraph, and a closing line) with identical `chunk_size`/`chunk_overlap` settings and prints each splitter's chunks side by side — `CharacterTextSplitter` produces 4 chunks (two of them over the 220-character target, with a visible warning), while `RecursiveCharacterTextSplitter` produces 7 chunks, all within the target size, by cutting on sentence/word boundaries instead. It then runs `split_documents()` on two sample `Document`s and asserts that `metadata["source"]` survives onto every chunk. The exercise at the end re-runs the comparison with a much smaller `chunk_size=60`, showing both splitters produce far more chunks, with `RecursiveCharacterTextSplitter` still favoring word boundaries where `CharacterTextSplitter` cannot.
+
+No API key or network access is required — this is pure, offline Python. Next up: turning these chunks into embeddings and storing them in a vector database.
