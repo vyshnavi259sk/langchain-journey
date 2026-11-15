@@ -6,3 +6,7 @@ requests==2.34.0
 urllib3==2.7.0
 langchain-core
 langchain-groq
+langchain-community
+pypdf==6.17.0
+beautifulsoup4==4.15.0
+reportlab==5.0.1

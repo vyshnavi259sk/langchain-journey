@@ -34,6 +34,15 @@ GROQ_API_KEY=your_key_here
 
 (Day 5 was a planning/reading day with no code checked in.)
 
+`journal.md` also tracks its own "Day N" count, separate from the table
+above (it started over from Day 1 rather than continuing from Day 8). Its
+implementation files are named to avoid colliding with the table above:
+
+| Journal day | File | What it covers |
+|-----|------|-----------------|
+| "Day 2" (2026-11-14) | `day2_lcel_runnables.py` | LCEL's `RunnableParallel`, `RunnableLambda`, and `RunnablePassthrough` — fanning a single input into multiple branches, the shape that later powers RAG chains |
+| "Day 3" (2026-11-15) | `day3_document_loaders.py` | `TextLoader`, `DirectoryLoader`, `PyPDFLoader`, and `WebBaseLoader` turning files/PDFs/web pages into `Document` objects with `page_content` + `metadata` |
+
 ## Daily log
 
 `journal.md` tracks a running streak of daily commits to this repo.
