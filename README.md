@@ -43,6 +43,7 @@ implementation files are named to avoid colliding with the table above:
 | "Day 2" (2026-11-14) | `day2_lcel_runnables.py` | LCEL's `RunnableParallel`, `RunnableLambda`, and `RunnablePassthrough` — fanning a single input into multiple branches, the shape that later powers RAG chains |
 | "Day 3" (2026-11-15) | `day3_document_loaders.py` | `TextLoader`, `DirectoryLoader`, `PyPDFLoader`, and `WebBaseLoader` turning files/PDFs/web pages into `Document` objects with `page_content` + `metadata` |
 | "Day 4" (2026-11-15) | `day4_text_splitting.py` | `CharacterTextSplitter` and `RecursiveCharacterTextSplitter` — breaking `Document`s into overlapping chunks via `chunk_size`/`chunk_overlap` ahead of embeddings |
+| "Day 5" (2026-11-16) | `day5_embeddings_vectorstore.py` | A custom `Embeddings` subclass (`TfidfEmbeddings`, local/offline, no API key) plus `langchain_community.vectorstores.FAISS` — `from_documents`, `similarity_search`, `similarity_search_with_score`, `as_retriever`, and `add_documents` |
 
 ## Daily log
 
