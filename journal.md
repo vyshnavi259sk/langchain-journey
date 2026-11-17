@@ -61,3 +61,30 @@ Key pieces:
 - **Why it matters**: this is the index a Retrieval-Augmented Generation (RAG) chain queries at run time instead of relying only on what an LLM memorized during training — and `.as_retriever()` returns a standard LangChain `Runnable`, so it plugs directly into the `RunnableParallel` pattern from Day 2 (`{"context": retriever, "question": RunnablePassthrough()}`) to build a real RAG chain next.
 
 Groq (used for chat in day6.py/day7.py/day8-*.py) doesn't serve an embeddings endpoint, and a real sentence-transformer model would require a large torch download. So today's practical implementation, `day5_embeddings_vectorstore.py`, writes a small custom `Embeddings` subclass, `TfidfEmbeddings`, backed by scikit-learn's `TfidfVectorizer` — a legitimate free/local embedding method with no API key and no network call. It builds a FAISS index from six documents about this same learning journey (day3/day4/day2/day7/day8-1 concepts), runs `similarity_search` and `similarity_search_with_score` against a couple of natural-language queries and confirms the nearest matches are the semantically correct ones, demonstrates `as_retriever().invoke(...)`, and finishes with an exercise that calls `add_documents()` to grow the index after it's already built and re-queries to confirm the new document is retrievable. A commented-out block at the bottom shows the one-line swap to a real API-based `OpenAIEmbeddings` (reading its key via `os.getenv("OPENAI_API_KEY")`) with everything downstream unchanged. `requirements.txt` gained `numpy`, `scikit-learn`, and `faiss-cpu`; no new environment variables were needed since the script runs fully offline.
+
+## 17-11-2026
+**Day 6: Retrieval-Augmented Generation (RAG) — wiring a retriever into an LCEL chain**
+
+Day 5 ended with a FAISS vector store whose `.as_retriever()` is just another LangChain `Runnable`, and Day 2 covered `RunnableParallel`/`RunnablePassthrough`, the pieces that fan one input into several branches and merge the results into a dict. Today puts both together to build an actual **Retrieval-Augmented Generation (RAG) chain** — the pattern behind every "chat with your own documents" system.
+
+The core LCEL expression:
+
+```python
+rag_chain = (
+    RunnableParallel(context=retriever | RunnableLambda(format_docs), question=RunnablePassthrough())
+    | prompt
+    | llm
+    | StrOutputParser()
+)
+```
+
+Key components and how they fit:
+
+- **`RunnableParallel(context=..., question=...)`** — takes the raw question string and runs two branches on it at once: the retriever turns it into relevant `Document`s ("context"), while `RunnablePassthrough()` forwards the original question unchanged. The results merge into `{"context": ..., "question": ...}`.
+- **`RunnableLambda(format_docs)`** — a small custom function wrapped as a Runnable that joins the retrieved `Document` list into a single string, since a prompt template needs text, not Python objects.
+- **`ChatPromptTemplate`** — a system message instructing the model to answer *only* from the supplied context (so it doesn't fall back on parametric knowledge), plus the merged dict filling in the human message.
+- **`ChatGroq` + `StrOutputParser()`** — generates the grounded answer and unwraps it to plain text, same as day8-1.py.
+
+Why this matters: an LLM's training data is frozen and has no knowledge of documents that only live in a private vector store. RAG fixes that at query time by retrieving the most relevant chunks and stuffing them into the prompt before generation, trading a cheap retrieval step for much better grounding and far less hallucination on domain-specific questions.
+
+Practical implementation: `day6_retrieval_rag.py` rebuilds a Day-5-style `TfidfEmbeddings` + FAISS index over a small knowledge base of facts about this very project (deliberately specific enough that a general-purpose LLM couldn't already know them), then assembles the full `RunnableParallel → prompt → llm → StrOutputParser` chain described above. Since this environment has no `GROQ_API_KEY` configured, the script detects that at chain-build time, skips constructing `ChatGroq` entirely, and instead invokes just the retrieval + prompt-assembly stages — printing the retrieved context and the exact rendered prompt messages that would have been sent — so the LCEL wiring is demonstrated end-to-end without a network call (it still prefers a real answer via Groq when a key is present). The exercise at the end compares `k=1` vs `k=3` on the same query to show how the retriever's `k` controls how much (and how precise) the retrieved context is — the classic recall/precision tradeoff in retrieval. No new dependencies or environment variables were needed; `.env.example` was updated to note that this script also runs correctly without `GROQ_API_KEY` set.
