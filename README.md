@@ -44,6 +44,8 @@ implementation files are named to avoid colliding with the table above:
 | "Day 3" (2026-11-15) | `day3_document_loaders.py` | `TextLoader`, `DirectoryLoader`, `PyPDFLoader`, and `WebBaseLoader` turning files/PDFs/web pages into `Document` objects with `page_content` + `metadata` |
 | "Day 4" (2026-11-15) | `day4_text_splitting.py` | `CharacterTextSplitter` and `RecursiveCharacterTextSplitter` — breaking `Document`s into overlapping chunks via `chunk_size`/`chunk_overlap` ahead of embeddings |
 | "Day 5" (2026-11-16) | `day5_embeddings_vectorstore.py` | A custom `Embeddings` subclass (`TfidfEmbeddings`, local/offline, no API key) plus `langchain_community.vectorstores.FAISS` — `from_documents`, `similarity_search`, `similarity_search_with_score`, `as_retriever`, and `add_documents` |
+| "Day 6" (2026-11-17) | `day6_retrieval_rag.py` | A full RAG chain — `RunnableParallel(context=retriever \| RunnableLambda(format_docs), question=RunnablePassthrough()) \| prompt \| llm \| StrOutputParser()` — plus the `k` recall/precision tradeoff |
+| "Day 7" (2026-11-18) | `day7_conversation_memory.py` | Conversation memory via LangGraph's `StateGraph`/`MessagesState` + `InMemorySaver` checkpointer (the current, non-deprecated replacement for `RunnableWithMessageHistory`), keyed by `thread_id`, plus `trim_messages` to cap history sent to the model |
 
 ## Daily log
 
