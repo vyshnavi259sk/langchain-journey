@@ -47,6 +47,7 @@ implementation files are named to avoid colliding with the table above:
 | "Day 6" (2026-11-17) | `day6_retrieval_rag.py` | A full RAG chain — `RunnableParallel(context=retriever \| RunnableLambda(format_docs), question=RunnablePassthrough()) \| prompt \| llm \| StrOutputParser()` — plus the `k` recall/precision tradeoff |
 | "Day 7" (2026-11-18) | `day7_conversation_memory.py` | Conversation memory via LangGraph's `StateGraph`/`MessagesState` + `InMemorySaver` checkpointer (the current, non-deprecated replacement for `RunnableWithMessageHistory`), keyed by `thread_id`, plus `trim_messages` to cap history sent to the model |
 | "Day 8" (2026-11-19) | `day8_conversational_rag.py` | Conversational RAG — a history-aware query-rewriting step (`contextualize_question()`) in front of the Day 6 retriever, combined with Day 7's `StateGraph` + checkpointer, so follow-up questions that rely on prior turns still retrieve the right context |
+| "Day 9" (2026-11-20) | `day9_tool_calling.py` | Tool calling — `@tool`-decorated functions, `ChatGroq.bind_tools()`, and a hand-rolled call → execute → `ToolMessage` feed-back loop (the mechanics an agent framework later automates) |
 
 ## Daily log
 

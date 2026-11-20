@@ -116,3 +116,19 @@ Important components and how they work: `contextualize_question()` is the new pi
 Why it matters: this is the wiring almost every real "chat with your documents" product uses — RAG and conversation memory are each simple on their own, but a RAG chain with no memory can't handle follow-ups, and a memory-only chat graph (Day 7) never grounds its answers in retrieved facts. Rewriting the query *before* retrieval, rather than only prompting the final answer with history, is what keeps retrieval itself on-topic once a conversation drifts into pronouns.
 
 The practical implementation, `day8_conversational_rag.py`, runs a two-turn demo on one `thread_id` (a question about the FAISS retriever, then the vague follow-up "What about that?") and an exercise that retrieves with the raw follow-up and the rewritten standalone question side by side, reporting whether their top retrieved documents matched or differed. No new dependencies or environment variables were needed — this reuses `langgraph` (Day 7), `langchain-community` + `faiss-cpu` + `scikit-learn` (Day 5), and `langchain-groq` (Day 6), all already in `requirements.txt`.
+
+## 20-11-2026
+**Day 9: Tool Calling — binding Python functions to an LLM**
+
+Days 6/8 grounded answers in static, pre-indexed documents via retrieval. Today's topic, **tool calling**, lets the LLM instead request that a specific Python function be run with specific arguments and read back its real result — the mechanism needed for exact computation or live actions, and the direct foundation of agents, coming up next on the roadmap.
+
+Key pieces:
+
+- **`langchain_core.tools.tool`** — a decorator turning a typed, documented Python function into a `StructuredTool`. Its type hints build the tool's argument schema, and its docstring becomes the natural-language description the model uses to decide when (and how) to call it.
+- **`ChatGroq.bind_tools(tools)`** — attaches tool schemas to the chat model so a response may come back as an `AIMessage` with `tool_calls` populated (a list of `{"name", "args", "id"}` dicts) instead of plain text.
+- **`ToolMessage`** — wraps a tool's real result, keyed to its originating call via `tool_call_id`, and gets appended to the message history before invoking the model again for a final, grounded answer.
+- **The manual loop** — `invoke → if tool_calls: run them, append ToolMessages, invoke again → else: done` — exactly what agent frameworks like LangGraph's `create_react_agent` automate internally; writing it by hand once makes clear what such a framework is actually doing.
+
+Why it matters: retrieval (Day 6/8) answers from what was indexed ahead of time; tool calling answers from what the model can compute or fetch right now, deciding per-question whether a tool is even needed — the foundation under every real agent.
+
+Practical implementation: `day9_tool_calling.py` defines four tools (`add_numbers`, `get_word_length`, `safe_divide`, and `search_project_notes` — a deliberately tiny stand-in for wrapping Day 6's real retriever as a callable tool), binds them to `ChatGroq` when `GROQ_API_KEY` is set, and otherwise uses a deterministic offline keyword router so the full call → execute → feed-back loop still runs end-to-end with no network call. The demo covers a single-tool question, a question needing two tool calls in the same turn, and a project-note lookup; the exercise deliberately triggers a `ValueError` in `safe_divide` (division by zero) and confirms the loop catches it and reports the error back as a tool result instead of crashing. No new dependencies — `langchain_core.tools` ships with `langchain-core`, already in `requirements.txt`; no new environment variables either.
