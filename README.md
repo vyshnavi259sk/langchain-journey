@@ -50,6 +50,7 @@ implementation files are named to avoid colliding with the table above:
 | "Day 9" (2026-11-20) | `day9_tool_calling.py` | Tool calling — `@tool`-decorated functions, `ChatGroq.bind_tools()`, and a hand-rolled call → execute → `ToolMessage` feed-back loop (the mechanics an agent framework later automates) |
 | "Day 10" (2026-11-21) | `day10_react_agent.py` | Agents — the Day 9 tool loop rebuilt as an explicit LangGraph agent/tools graph via `create_react_agent`, with `ToolNode` and conditional edges replacing the hand-written `while` loop |
 | "Day 11" (2026-11-22) | `day11_agentic_rag.py` | Agentic RAG — the Day 5/6/8 FAISS retriever wrapped as a plain `@tool` alongside an unrelated tool, so a `create_react_agent` decides per-question whether retrieval is even relevant instead of a fixed pipeline always retrieving first |
+| "Day 12" (2026-11-23) | `day12_multi_agent_supervisor.py` | Multi-agent systems — a LangGraph supervisor node classifies each question into `research`/`math`/`direct` and routes it to a dedicated `create_react_agent` specialist (research-only or math-only tools) instead of one agent holding every tool |
 
 ## Daily log
 
