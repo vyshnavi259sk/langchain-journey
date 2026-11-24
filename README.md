@@ -51,6 +51,7 @@ implementation files are named to avoid colliding with the table above:
 | "Day 10" (2026-11-21) | `day10_react_agent.py` | Agents — the Day 9 tool loop rebuilt as an explicit LangGraph agent/tools graph via `create_react_agent`, with `ToolNode` and conditional edges replacing the hand-written `while` loop |
 | "Day 11" (2026-11-22) | `day11_agentic_rag.py` | Agentic RAG — the Day 5/6/8 FAISS retriever wrapped as a plain `@tool` alongside an unrelated tool, so a `create_react_agent` decides per-question whether retrieval is even relevant instead of a fixed pipeline always retrieving first |
 | "Day 12" (2026-11-23) | `day12_multi_agent_supervisor.py` | Multi-agent systems — a LangGraph supervisor node classifies each question into `research`/`math`/`direct` and routes it to a dedicated `create_react_agent` specialist (research-only or math-only tools) instead of one agent holding every tool |
+| "Day 13" (2026-11-24) | `day13_agent_handoffs.py` | Agent handoffs — `langgraph.types.Command` lets a specialist return a state update *and* a routing decision in one value, so a compound question can hop directly from one specialist to the other (with a `visited` cycle guard) instead of always returning through a central supervisor |
 
 ## Daily log
 
