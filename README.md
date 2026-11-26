@@ -53,6 +53,7 @@ implementation files are named to avoid colliding with the table above:
 | "Day 12" (2026-11-23) | `day12_multi_agent_supervisor.py` | Multi-agent systems — a LangGraph supervisor node classifies each question into `research`/`math`/`direct` and routes it to a dedicated `create_react_agent` specialist (research-only or math-only tools) instead of one agent holding every tool |
 | "Day 13" (2026-11-24) | `day13_agent_handoffs.py` | Agent handoffs — `langgraph.types.Command` lets a specialist return a state update *and* a routing decision in one value, so a compound question can hop directly from one specialist to the other (with a `visited` cycle guard) instead of always returning through a central supervisor |
 | "Day 14" (2026-11-25) | `day14_human_in_the_loop.py` | Human-in-the-loop agents — `langgraph.types.interrupt()` pauses a graph before a sensitive tool call (e.g. `send_notification`), surfacing the pending call for approval; `Command(resume=...)` resumes into the real tool call or a rejection `ToolMessage`, while safe tools (`add_numbers`) still run immediately with no pause |
+| "Day 15" (2026-11-26) | `day15_persistent_checkpointing.py` | Persistent checkpointing — swapping Day 7/14's in-memory `MemorySaver` for `langgraph.checkpoint.sqlite.SqliteSaver`, proving a paused `interrupt()` thread survives a simulated process restart (a brand-new SQLite connection resumes it from disk) and that separate `thread_id`s on the same file never cross-contaminate, plus `get_state_history()` for checkpoint-by-checkpoint time travel |
 
 ## Daily log
 
